@@ -1,0 +1,166 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: rideshare-api-gateway
+    env_file: .env
+    ports:
+      - "31230:8500"
+    depends_on:
+      - trip-service
+      - search-service
+      - booking-service
+      - payment-service
+      - rating-service
+      - verification-service
+      - chat-service
+      - notification-service
+    networks: [rideshare-net]
+
+  trip-service:
+    build:
+      context: .
+      dockerfile: trip-service/Dockerfile
+    container_name: rideshare-trip
+    env_file: .env
+    ports:
+      - "31231:8501"
+    depends_on:
+      - postgres
+      - redis
+    networks: [rideshare-net]
+
+  search-service:
+    build:
+      context: .
+      dockerfile: search-service/Dockerfile
+    container_name: rideshare-search
+    env_file: .env
+    ports:
+      - "31055:8502"
+    depends_on:
+      - redis
+    networks: [rideshare-net]
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: booking-service/Dockerfile
+    container_name: rideshare-booking
+    env_file: .env
+    ports:
+      - "31232:8503"
+    depends_on:
+      - postgres
+    networks: [rideshare-net]
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    container_name: rideshare-payment
+    env_file: .env
+    ports:
+      - "31233:8504"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks: [rideshare-net]
+
+  rating-service:
+    build:
+      context: .
+      dockerfile: rating-service/Dockerfile
+    container_name: rideshare-rating
+    env_file: .env
+    ports:
+      - "31053:8505"
+    depends_on:
+      - postgres
+    networks: [rideshare-net]
+
+  verification-service:
+    build:
+      context: .
+      dockerfile: verification-service/Dockerfile
+    container_name: rideshare-verification
+    env_file: .env
+    ports:
+      - "31234:8506"
+    depends_on:
+      - postgres
+    networks: [rideshare-net]
+
+  chat-service:
+    build:
+      context: .
+      dockerfile: chat-service/Dockerfile
+    container_name: rideshare-chat
+    env_file: .env
+    ports:
+      - "31057:8507"
+    depends_on:
+      - redis
+    networks: [rideshare-net]
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    container_name: rideshare-notification
+    env_file: .env
+    ports:
+      - "31235:8508"
+    depends_on:
+      - rabbitmq
+    networks: [rideshare-net]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_GATEWAY_URL: ${VITE_API_GATEWAY_URL:-http://localhost:31230}
+    container_name: rideshare-frontend
+    env_file: .env
+    ports:
+      - "31236:5177"
+    depends_on:
+      - api-gateway
+    networks: [rideshare-net]
+
+  postgres:
+    image: postgres:16
+    container_name: rideshare-postgres
+    environment:
+      POSTGRES_DB: rideshare
+      POSTGRES_USER: rideshare
+      POSTGRES_PASSWORD: rideshare
+    ports:
+      - "31054:5432"
+    volumes:
+      - rideshare_postgres_data:/var/lib/postgresql/data
+    networks: [rideshare-net]
+
+  redis:
+    image: redis:7
+    container_name: rideshare-redis
+    ports:
+      - "31052:6379"
+    networks: [rideshare-net]
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rideshare-rabbitmq
+    ports:
+      - "31056:5672"
+      - "31220:15672"
+    networks: [rideshare-net]
+
+networks:
+  rideshare-net:
+    driver: bridge
+
+volumes:
+  rideshare_postgres_data:
