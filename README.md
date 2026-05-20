@@ -43,7 +43,7 @@ RideShare is a microservice platform for finding ride companions on intercity, s
 ## Local run
 
 ```bash
-cd D:\Шарага\Кинжа10\Task_25_RideShare
+cd 'your/project/folder'
 docker compose up --build -d
 ```
 
