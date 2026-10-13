@@ -74,7 +74,7 @@ export function DashboardPage() {
       return "loading";
     }
     if (status === "failed") {
-      return "fallback";
+      return "Service unavailable";
     }
     return "live";
   }, [status]);
@@ -108,7 +108,7 @@ export function DashboardPage() {
       <header className="hero">
         <div className="hero-copy">
           <p className="eyebrow">RideShare Control Desk</p>
-          <h1>Trips, bookings, payments, trust checks, and safety updates in one place.</h1>
+          <h1>Journey overview</h1>
           <p className="sub">
             This dashboard aggregates trip status, booking queue, verification checks, live chat, and route tracker
             updates from all RideShare microservices.
@@ -131,12 +131,12 @@ export function DashboardPage() {
             <input value={userId} onChange={(event) => setUserId(event.target.value)} placeholder="USR-301" />
           </label>
           <div className="hero-actions">
-            <button onClick={refresh}>Refresh dashboard</button>
+            <button onClick={refresh} disabled={status === "loading"}>Refresh dashboard</button>
             <button className="ghost" onClick={() => setTheme((current) => (current === "light" ? "dark" : "light"))}>
               Theme
             </button>
           </div>
-          <p className="status-line">Status: {statusLabel}</p>
+          <p className="status-line" role="status" aria-live="polite">Status: {statusLabel}</p>
         </div>
       </header>
 
@@ -167,7 +167,7 @@ export function DashboardPage() {
         />
       </section>
 
-      {error ? <div className="error-banner">{error}</div> : null}
+      {error ? <div className="error-banner" role="alert">{error}</div> : null}
 
       <section className="content-grid">
         <article className="panel panel-featured">

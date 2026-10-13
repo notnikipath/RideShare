@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from typing import Any
@@ -145,12 +145,6 @@ async def list_payments(
     return {"items": items, "count": len(items)}
 
 
-@app.get("/payments/{payment_id}")
-async def get_payment(payment_id: str) -> dict[str, Any]:
-    record = payments.get(payment_id)
-    if record is None:
-        raise HTTPException(status_code=404, detail="Payment not found")
-    return record.model_dump(mode="json")
 
 
 @app.post("/payments/{payment_id}/refund")
@@ -203,3 +197,11 @@ async def queue_stats() -> dict[str, Any]:
 async def get_audit(limit: int = 100, actor_role: Role = Role.ADMIN) -> dict[str, Any]:
     _assert_permission(actor_role, "audit:read")
     return {"items": audit_log[-limit:]}
+
+
+@app.get("/payments/{payment_id}")
+async def get_payment(payment_id: str) -> dict[str, Any]:
+    record = payments.get(payment_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    return record.model_dump(mode="json")

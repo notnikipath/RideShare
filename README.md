@@ -1,4 +1,4 @@
-﻿# RideShare
+# RideShare
 
 RideShare is a microservice platform for finding ride companions on intercity, suburban, and recurring carpool routes.
 
@@ -43,7 +43,7 @@ RideShare is a microservice platform for finding ride companions on intercity, s
 ## Local run
 
 ```bash
-cd 'your/project/folder'
+cd RideShare
 docker compose up --build -d
 ```
 
